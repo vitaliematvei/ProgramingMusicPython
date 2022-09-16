@@ -1,14 +1,23 @@
 import tkinter as tk
 
 
+def mod12(note):
+    note = int(note)
+    while note < 0:
+        note += 12
+    while note >= 12:
+        note -= 12
+    return note
+
+
 class Window(tk.Tk):
     def __init__(self):
         super(Window, self).__init__()
-        self.geometry("315x150")
+        self.note_index = tk.IntVar()
+        self.geometry("380x150")
         self.resizable(False, False)
         self.title("Transposition")
-
-        # self.table = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+        self.table = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
         # NOTE INPUT LABEL
         self.top_label_text = tk.StringVar()
@@ -19,7 +28,7 @@ class Window(tk.Tk):
         # NOTE INPUT
         self.note_text = tk.StringVar()
         self.note_entry = tk.Entry(self, textvariable=self.note_text, width=5)
-        self.note_entry.grid(row=0, column=1)
+        self.note_entry.grid(row=0, column=1, ipadx=35)
 
         # INTERVAL INPUT LABEL
         self.interval_label_text = tk.StringVar()
@@ -30,7 +39,7 @@ class Window(tk.Tk):
         # INTERVAL INPUT
         self.interval_text = tk.StringVar()
         self.interval_entry = tk.Entry(self, textvariable=self.interval_text, width=5)
-        self.interval_entry.grid(row=1, column=1)
+        self.interval_entry.grid(row=1, column=1, ipadx=35)
 
         # ---------------------Calculate Button ---------------------
         self.transpose_button = tk.Button(self, text="Calculate", command=self.transpose, font=("Arial", 11, "bold"))
@@ -46,21 +55,19 @@ class Window(tk.Tk):
         self.show_label = tk.Label(self, textvar=self.show_label_value, font=("Arial", 10, "bold"))
         self.show_label.grid(row=3, column=1, pady=5)
 
-
-        # self.table = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-
     def transpose(self):
-
-
-       # if self.note_entry not in table:
-            # self.show_label_value.set("Could not find!")
-
-
-        #show = translate_from_note_to_pitch_class(
-         #   self.note_entry.get().lower(),
-          #  self.interval_entry.get().lower())
-        show = self.note_entry.get().upper() + self.interval_entry.get().upper()
-        self.show_label_value.set(show)
+        if self.note_entry.get().upper() not in self.table or not self.interval_entry.get().isdigit():
+            self.show_label_value.set("Could not find!")
+        else:
+            note_index = mod12(self.interval_entry.get())
+            for note in self.table:
+                if self.note_entry.get().upper() == note:
+                    for idx, ele in enumerate(self.table):
+                        if note == ele:
+                            note_index += idx
+                            if note_index > 11:
+                                note_index -= 12
+                            self.show_label_value.set(self.table[note_index])
 
 
 if __name__ == "__main__":
